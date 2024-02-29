@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Posesion extends Model
+{
+    use HasFactory;
+
+    public function videojuegos(){
+        return $this->belongsToMany(Videojuego::class);
+    }
+}
