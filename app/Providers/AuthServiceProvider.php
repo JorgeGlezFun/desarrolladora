@@ -12,8 +12,9 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array<class-string, class-string>
      */
+    // Cuando creemos la politica, la registramos aqui, juntando el modelo Videojuego con la politica creada.
     protected $policies = [
-        //
+        'App\Models\Videojuego' => 'App\Policies\VideojuegoPolicy',
     ];
 
     /**
@@ -21,6 +22,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->registerPolicies(); // Hay que usar esta funcion para terminar de registrar la politica
     }
 }

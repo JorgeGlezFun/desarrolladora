@@ -6,6 +6,7 @@ use App\Models\Desarrolladora;
 use Illuminate\Http\Request;
 use App\Models\Videojuego;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class VideojuegoController extends Controller
 {
@@ -82,7 +83,16 @@ class VideojuegoController extends Controller
     {
         $desarrolladoras = Desarrolladora::all();
 
-        return view('videojuegos.edit', ['videojuego' => $videojuego, 'desarrolladoras' => $desarrolladoras]);
+        // Importamos "use Illuminate\Support\Facades\Gate;" en nuestro controlador para poder hacer uso del Gate::allows
+        // esto funciona de manera que revisa si el usuario esta autorizado para realizar la accion (lo mira en VideojuegoPolicies)
+        // Una vez lo confirma, procede con el ability (la accion que queremos que verifique, en este caso update), y mira si puede
+        // realizarla en el modelo objeto que en este caso es Videojuego, si cumple con ello, entra al edit, si no cumple, devuelve al index.
+
+        if (Gate::allows('update', $videojuego)) {
+            return view('videojuegos.edit', ['videojuego' => $videojuego, 'desarrolladoras' => $desarrolladoras]);
+        } else {
+            return redirect()->route('videojuegos.index');
+        }
     }
 
     /**
