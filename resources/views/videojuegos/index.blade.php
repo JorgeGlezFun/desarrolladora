@@ -10,10 +10,14 @@
                         Año de publicación
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Desarrolladora
+                        <a href="{{ route('videojuegos.index', ['order' => 'desarrolladoras.nombre', 'order_dir' => order_dir($order == 'desarrolladoras.nombre', $order_dir)]) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            Desarrolladora {{ order_dir_arrow($order == 'desarrolladora.nombre', $order_dir) }}
+                        </a>
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Distribuidora
+                        <a href="{{ route('videojuegos.index', ['order' => 'distribuidoras.nombre', 'order_dir' => order_dir($order == 'distribuidoras.nombre', $order_dir)]) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            Distribuidora {{ order_dir_arrow($order == 'distribuidora.nombre', $order_dir) }}
+                        </a>
                     </th>
                     <th scope="col" class="px-6 py-3" colspan="2">
                         Acción
@@ -36,7 +40,7 @@
                             {{ $videojuego->desarrolladora->nombre}}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $videojuego->desarrolladora->distribuidora_id }}
+                            {{ $videojuego->desarrolladora->distribuidora->nombre }}
                         </td>
                         <td>
                             <a href="{{ route('videojuegos.edit', ['videojuego' => $videojuego]) }}"

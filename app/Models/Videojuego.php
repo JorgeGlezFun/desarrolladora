@@ -21,7 +21,7 @@ class Videojuego extends Model
         return $this->belongsTo(Desarrolladora::class);
     }
 
-    public function posesiones(){
-        return $this->belongsToMany(Posesion::class);
+    public function users(){
+        return $this->belongsToMany(User::class, 'posesiones');
     }
 }

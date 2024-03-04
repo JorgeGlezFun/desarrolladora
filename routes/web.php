@@ -26,4 +26,5 @@ Route::view('profile', 'profile')
 
 require __DIR__.'/auth.php';
 
-Route::resource('videojuegos', VideojuegoController::class);
+// El middleware('auth') te manda a loguearte pasando antes por ahi que por la pagina a la que quieres ir
+Route::resource('videojuegos', VideojuegoController::class)->middleware('auth');

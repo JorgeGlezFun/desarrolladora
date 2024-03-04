@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Desarrolladora;
 use Illuminate\Http\Request;
 use App\Models\Videojuego;
+use Illuminate\Support\Facades\Auth;
 
 class VideojuegoController extends Controller
 {
@@ -13,8 +14,34 @@ class VideojuegoController extends Controller
      */
     public function index(Request $request)
     {
-        $desarrolladoras = Desarrolladora::all();
-        return view('videojuegos.index', ["videojuegos"=>Videojuego::all(), 'desarrolladoras' => $desarrolladoras]);
+        $order = $request->query('order', 'desarrolladoras.nombre'); // Crea una query para ordenar por el nombre de la desarrolladora
+        $order_dir = $request->query('order_dir', 'asc'); // Crea una query para ordenar de forma ascendente
+        // Realiza la consulta, con la tabla Videojuego, juntándola con Desarrolladora y esta a su vez con distribuidora
+        $videojuegos = Auth::user()->videojuegos()->with(['desarrolladora', 'desarrolladora.distribuidora'])
+        /*
+        Auth::user()->videojuegos()->with(['desarrolladora', 'desarrolladora.distribuidora']) Esto lo que hace es que segun el usuario loguedo
+        con Auth::user() sacas el objeto de dicho usuario, le pasas el metodo videojuegos() que hemos creado para la relacion (esta en el modelo User)
+        with(['desarrolladora', 'desarrolladora.distribuidora']) carga las relaciones desarrolladora y distribuidora de la relación desarrolladora del modelo principal.
+        */
+
+        // Hacemos un join de la tabla "desarrolladoras" a través del id en videojuegos
+        ->join('desarrolladoras', 'videojuegos.desarrolladora_id', '=', 'desarrolladoras.id')
+        ->join('distribuidoras', 'desarrolladoras.distribuidora_id', '=', 'distribuidoras.id')
+        ->orderBy($order, $order_dir) // Ordena por los parametros pasados
+        ->orderBy('distribuidoras.nombre', $order_dir) // Ordena también por el nombre de la distribuidora
+        ->orderBy('videojuegos.titulo') // Ordena por título (si es necesario)
+        ->get(); // Recoge y devuelve la consulta
+
+        /*
+        Si queremos hacer una paginacion, prescindimos del get y usamos ->paginate(n)
+        en la paginacion hay que usar un {{ $resultados->links() }} para realizar la paginacion
+        en este caso $resultados es $videojuegos
+        */
+        return view('videojuegos.index', [
+            'videojuegos'=>$videojuegos,
+            'order'=>$order,
+            'order_dir'=>$order_dir,
+        ]);
     }
 
     /**
@@ -37,7 +64,7 @@ class VideojuegoController extends Controller
             'anyo' => $request->anyo,
             'desarrolladora_id' => $request->desarrolladora_id
         ]);
-        return redirect()->route("videojuegos.index");
+        return redirect()->route('videojuegos.index');
     }
 
     /**
@@ -64,11 +91,11 @@ class VideojuegoController extends Controller
     public function update(Request $request, Videojuego $videojuego)
     {
         $videojuego->update([
-            "titulo" =>$request->titulo,
-            "anyo" => $request->anyo,
-            "desarrolladora_id" => $request->desarrolladora_id
+            'titulo' =>$request->titulo,
+            'anyo' => $request->anyo,
+            'desarrolladora_id' => $request->desarrolladora_id
         ]);
-        return redirect()->route("videojuegos.index");
+        return redirect()->route('videojuegos.index');
     }
 
     /**
@@ -77,6 +104,6 @@ class VideojuegoController extends Controller
     public function destroy(Videojuego $videojuego)
     {
         Videojuego::destroy([$videojuego->id]);
-        return redirect()->route("videojuegos.index");
+        return redirect()->route('videojuegos.index');
     }
 }

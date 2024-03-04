@@ -15,6 +15,8 @@ return new class extends Migration
             $table->foreignId('videojuego_id')->constrained('videojuegos');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
+            // IMPORTANTE Marca que las dos foreignKey juntas actuan como primary key (es porque es N:M)
+            $table->primary(['videojuego_id', 'user_id']);
         });
     }
 

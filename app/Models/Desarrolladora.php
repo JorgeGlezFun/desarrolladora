@@ -15,8 +15,8 @@ class Desarrolladora extends Model
 
     use HasFactory;
 
-    public function distribuidoras(){
-        return $this->hasMany(Distribuidor::class);
+    public function distribuidora(){
+        return $this->belongsTo(Distribuidor::class);
     }
 
     public function videojuegos(){

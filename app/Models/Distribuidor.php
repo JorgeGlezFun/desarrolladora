@@ -17,7 +17,7 @@ class Distribuidor extends Model
 
     use HasFactory;
 
-    public function desarrolladora(){
-        return $this->belongsTo(Desarrolladora::class);
+    public function desarrolladoras(){
+        return $this->hasMany(Desarrolladora::class);
     }
 }
