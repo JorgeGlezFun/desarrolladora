@@ -26,5 +26,7 @@ Route::view('profile', 'profile')
 
 require __DIR__.'/auth.php';
 
+Route::get('/videojuegos/poseo', [VideojuegoController::class, 'poseo'])->name('videojuegos.poseo');
+Route::post('/videojuegos/poseo', [VideojuegoController::class, 'poseoUpdate'])->name('videojuegos.poseoUpdate');
 // El middleware('auth') te manda a loguearte pasando antes por ahi que por la pagina a la que quieres ir
 Route::resource('videojuegos', VideojuegoController::class)->middleware('auth');

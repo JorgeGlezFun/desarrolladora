@@ -86,12 +86,12 @@ class VideojuegoController extends Controller
         // Importamos "use Illuminate\Support\Facades\Gate;" en nuestro controlador para poder hacer uso del Gate::allows
         // esto funciona de manera que revisa si el usuario esta autorizado para realizar la accion (lo mira en VideojuegoPolicies)
         // Una vez lo confirma, procede con el ability (la accion que queremos que verifique, en este caso update), y mira si puede
-        // realizarla en el modelo objeto que en este caso es Videojuego, si cumple con ello, entra al edit, si no cumple, devuelve al index.
+        // realizarla en el modelo objeto que en este caso es Videojuego, si cumple con ello, entra al edit, si no cumple, muestra el error 403
 
         if (Gate::allows('update', $videojuego)) {
             return view('videojuegos.edit', ['videojuego' => $videojuego, 'desarrolladoras' => $desarrolladoras]);
         } else {
-            return redirect()->route('videojuegos.index');
+            abort(403);
         }
     }
 
@@ -116,4 +116,29 @@ class VideojuegoController extends Controller
         Videojuego::destroy([$videojuego->id]);
         return redirect()->route('videojuegos.index');
     }
+
+    public function poseo()
+    {
+        $videojuegos = Videojuego::all();
+        return view('videojuegos.poseo', compact('videojuegos'));
+    }
+
+    public function poseoUpdate(Request $request)
+    {
+        $videojuego = Videojuego::where("id", $request->videojuego_id)->first();
+        $user = auth()->user();
+        if ($request->opcion == "Lo tengo"){
+            if(!$videojuego->users->find($user->id)){
+                $videojuego->users()->attach($user->id);
+            }
+        }else if($request->opcion == "No lo tengo"){
+            if($videojuego->users->find($user->id)){
+                $videojuego->users()->detach($user->id);
+            }
+        }
+
+        return redirect()->route("videojuegos.poseo");
+    }
+
+
 }
